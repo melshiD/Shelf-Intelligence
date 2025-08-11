@@ -1,0 +1,84 @@
+services:
+  - type: web
+    name: dvdapp-web
+    env: php
+    rootDir: app
+    plan: free
+    buildCommand: |
+      bash scripts/bootstrap.sh
+      php artisan migrate --force
+    startCommand: heroku-php-apache2 public/
+    healthCheckPath: /healthz
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dvdapp-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromRedis:
+          name: dvdapp-redis
+          property: connectionString
+      - key: FILESYSTEM_DISK
+        value: s3
+      - key: TMDB_API_KEY
+        sync: false
+      - key: OMDB_API_KEY
+        sync: false
+      - key: CV_ANALYZER_URL
+        fromService:
+          name: cv-analyzer
+          type: web
+          property: url
+
+  - type: worker
+    name: dvdapp-worker
+    env: php
+    rootDir: app
+    plan: free
+    buildCommand: |
+      bash scripts/bootstrap.sh
+    startCommand: php artisan queue:work --sleep=1 --tries=3
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dvdapp-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromRedis:
+          name: dvdapp-redis
+          property: connectionString
+      - key: FILESYSTEM_DISK
+        value: s3
+      - key: TMDB_API_KEY
+        sync: false
+      - key: OMDB_API_KEY
+        sync: false
+      - key: CV_ANALYZER_URL
+        fromService:
+          name: cv-analyzer
+          type: web
+          property: url
+
+  - type: web
+    name: cv-analyzer
+    env: docker
+    rootDir: cv-analyzer
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+
+databases:
+  - name: dvdapp-postgres
+    plan: free
+
+redis:
+  - name: dvdapp-redis
+    plan: free
