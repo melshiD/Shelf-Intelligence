@@ -24,9 +24,21 @@ services:
           property: connectionString
       - key: FILESYSTEM_DISK
         value: s3
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_DEFAULT_REGION
+        value: us-east-1
+      - key: AWS_BUCKET
+        sync: false
       - key: TMDB_API_KEY
         sync: false
       - key: OMDB_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
         sync: false
       - key: CV_ANALYZER_URL
         fromService:
@@ -57,9 +69,21 @@ services:
           property: connectionString
       - key: FILESYSTEM_DISK
         value: s3
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_DEFAULT_REGION
+        value: us-east-1
+      - key: AWS_BUCKET
+        sync: false
       - key: TMDB_API_KEY
         sync: false
       - key: OMDB_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
         sync: false
       - key: CV_ANALYZER_URL
         fromService:
@@ -74,6 +98,18 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     healthCheckPath: /healthz
+    envVars:
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_DEFAULT_REGION
+        value: us-east-1
+      - key: AWS_BUCKET
+        sync: false
+
 
 databases:
   - name: dvdapp-postgres
